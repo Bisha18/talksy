@@ -8,7 +8,7 @@ export const signup = async(req, res) => {
       if(!fullName || !email || !password){
          return res.status(400).json({message:"All fields are required"})
       }
-      
+
       if(password.length<6){
          return res.status(400).json({message:"Password must be at least 6 characters long"})
       }
@@ -41,10 +41,34 @@ export const signup = async(req, res) => {
    }
 };
 
-export const login = (req, res) => {
-  res.send("signup route");
+export const login = async(req, res) => {
+  const {email,password} = req.body
+  try{
+    const user = await User.findOne({email})
+    if(!user){
+      return res.status(400).json({message:"User not found"})
+    }
+    
+    const isPasswordValid = await bcrypt.compare(password,user.password)
+    if(!isPasswordValid){
+      return res.status(400).json({message:"Password is incorrect"})
+    }
+
+    generateToken(user._id,res)
+    return res.status(200).json({message:"User logged in successfully"})
+
+  }catch(error){
+    console.log(error);
+    return res.status(500).json({message:"Something went wrong"})
+  }
 };
 
 export const logout = (req, res) => {
-  res.send("logout route");
+  try{
+    res.cookie("jwt","",{httpOnly:true,maxAge:0,sameSite:"strict",secure:process.env.NODE_ENV==="production"});
+    return res.status(200).json({message:"User logged out successfully"})
+  }catch(error){
+    console.log(error);
+    return res.status(500).json({message:"Something went wrong"})
+  }
 };  
