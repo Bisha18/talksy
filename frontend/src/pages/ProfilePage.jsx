@@ -1,4 +1,4 @@
-import { useAuthStore } from "../../store/useAuthStore"
+import { useAuthStore } from "../store/useAuthStore.js"
 
 const ProfilePage = () => {
   const {authUser} = useAuthStore()
