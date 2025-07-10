@@ -2,6 +2,7 @@ import cloudinary from "../lib/cloudinary.js";
 import { generateToken } from "../lib/util.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
+
 export const signup = async (req, res) => {
   const { fullName, email, password } = req.body;
   try {
@@ -99,6 +100,11 @@ export const updateProfile = async (req, res) => {
     }
 
     const uploadResponse = await cloudinary.uploader.upload(profilePic);
+    console.log("Cloudinary Response:", uploadResponse);
+
+    if (!uploadResponse?.secure_url) {
+      return res.status(500).json({ message: "Failed to get image URL" });
+    }
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
@@ -106,9 +112,7 @@ export const updateProfile = async (req, res) => {
       { new: true }
     );
 
-    return res
-      .status(200)
-      .json( updatedUser );
+    return res.status(200).json({ user: updatedUser });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Something went wrong" });

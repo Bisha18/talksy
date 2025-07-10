@@ -22,10 +22,10 @@ const ProfilePage = () => {
 
   // Sync profilePic change with local selectedImg
   useEffect(() => {
-    if (authUser?.profilePic) {
-      setSelectedImg(authUser.profilePic);
+    if (authUser?.user?.profilePic) {
+      setSelectedImg(authUser.user.profilePic);
     }
-  }, [authUser?.profilePic]);
+  }, [authUser]);
 
   if (!authUser) return <div className="text-center pt-20">Loading profile...</div>;
 
@@ -48,13 +48,7 @@ const ProfilePage = () => {
               />
               <label
                 htmlFor="avatar-upload"
-                className={`
-                  absolute bottom-0 right-0 
-                  bg-base-content hover:scale-105
-                  p-2 rounded-full cursor-pointer 
-                  transition-all duration-200
-                  ${isUpdatingProfile ? "animate-pulse pointer-events-none" : ""}
-                `}
+                className={`absolute bottom-0 right-0 bg-base-content hover:scale-105 p-2 rounded-full cursor-pointer transition-all duration-200 ${isUpdatingProfile ? "animate-pulse pointer-events-none" : ""}`}
               >
                 <Camera className="w-5 h-5 text-base-200" />
                 <input
@@ -79,7 +73,7 @@ const ProfilePage = () => {
                 <User className="w-4 h-4" />
                 Full Name
               </div>
-              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{authUser?.fullName}</p>
+              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{authUser.user.fullName}</p>
             </div>
 
             <div className="space-y-1.5">
@@ -87,7 +81,7 @@ const ProfilePage = () => {
                 <Mail className="w-4 h-4" />
                 Email Address
               </div>
-              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{authUser?.email}</p>
+              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{authUser.user.email}</p>
             </div>
           </div>
 
@@ -97,7 +91,7 @@ const ProfilePage = () => {
             <div className="space-y-3 text-sm">
               <div className="flex items-center justify-between py-2 border-b border-zinc-700">
                 <span>Member Since</span>
-                <span>{authUser?.createdAt?.split("T")[0] || "N/A"}</span>
+                <span>{authUser.user.createdAt?.split("T")[0] || "N/A"}</span>
               </div>
               <div className="flex items-center justify-between py-2">
                 <span>Account Status</span>
