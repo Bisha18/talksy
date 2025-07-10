@@ -3,7 +3,6 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import HomePage from './pages/HomePage.jsx'
 import SignUpPage from './pages/SignUpPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
-import SettingsPage from './pages/SettingsPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 import Navbar from './components/Navbar.jsx'
 import { axiosInstance } from './lib/axios.js'
@@ -27,13 +26,12 @@ const App = () => {
     )
   }
   return (
-    <div>
+    <div data-theme = "cupcake">
       <Navbar/>
       <Routes>
         <Route path = '/' element = {authUser?<HomePage/>:<Navigate to = '/login'/>} />
         <Route path = '/signup' element = {!authUser?<SignUpPage/>:<Navigate to = '/'/>} />
         <Route path = '/login' element = {!authUser?<LoginPage/>:<Navigate to = '/'/>} />
-        <Route path = '/settings' element = {<SettingsPage/>} />
         <Route path = '/profile' element = {<ProfilePage/>} />
       </Routes>
     </div>

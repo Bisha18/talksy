@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 app.use(cookieParser());
 app.use('/api/auth',authRoutes);
-app.use('/api/message',messageRoutes);
+app.use('/api/messages',messageRoutes);
 
 app.listen(port,()=>{
   console.log("server is running on port 5001");
