@@ -1,10 +1,8 @@
-import { useState, useEffect } from "react";
-import { useAuthStore } from "../store/useAuthStore";
 import { Camera, Mail, User } from "lucide-react";
+import { useAuthStore } from "../store/useAuthStore";
 
 const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
-  const [selectedImg, setSelectedImg] = useState(null);
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -14,20 +12,14 @@ const ProfilePage = () => {
     reader.readAsDataURL(file);
 
     reader.onload = async () => {
-      const base64Image = reader.result;
-      setSelectedImg(base64Image);
-      await updateProfile({ profilePic: base64Image });
+      await updateProfile({ profilePic: reader.result });
     };
   };
 
-  // Sync profilePic change with local selectedImg
-  useEffect(() => {
-    if (authUser?.user?.profilePic) {
-      setSelectedImg(authUser.user.profilePic);
-    }
-  }, [authUser]);
-
-  if (!authUser) return <div className="text-center pt-20">Loading profile...</div>;
+  // This check is safe because App.jsx waits for authUser
+  if (!authUser) {
+    return null; 
+  }
 
   return (
     <div className="h-screen pt-20">
@@ -38,13 +30,13 @@ const ProfilePage = () => {
             <p className="mt-2 text-zinc-400">Your profile information</p>
           </div>
 
-          {/* Avatar upload */}
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
               <img
-                src={selectedImg || "/avatar.png"}
+                // FIX: This now works because authUser is a flat object
+                src={authUser.profilePic || "/avatar.png"}
                 alt="Profile"
-                className="size-32 rounded-full object-cover border-4"
+                className="size-32 rounded-full object-cover border-4 border-base-100"
               />
               <label
                 htmlFor="avatar-upload"
@@ -66,37 +58,26 @@ const ProfilePage = () => {
             </p>
           </div>
 
-          {/* User Info */}
           <div className="space-y-6">
             <div className="space-y-1.5">
               <div className="text-sm text-zinc-400 flex items-center gap-2">
                 <User className="w-4 h-4" />
                 Full Name
               </div>
-              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{authUser.user.fullName}</p>
+              <p className="px-4 py-2.5 bg-base-200 rounded-lg border border-base-100">{authUser.fullName}</p>
             </div>
-
             <div className="space-y-1.5">
               <div className="text-sm text-zinc-400 flex items-center gap-2">
                 <Mail className="w-4 h-4" />
                 Email Address
               </div>
-              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{authUser.user.email}</p>
+              <p className="px-4 py-2.5 bg-base-200 rounded-lg border border-base-100">{authUser.email}</p>
             </div>
-          </div>
-
-          {/* Account Info */}
-          <div className="mt-6 bg-base-300 rounded-xl p-6">
-            <h2 className="text-lg font-medium mb-4">Account Information</h2>
-            <div className="space-y-3 text-sm">
-              <div className="flex items-center justify-between py-2 border-b border-zinc-700">
-                <span>Member Since</span>
-                <span>{authUser.user.createdAt?.split("T")[0] || "N/A"}</span>
+             <div className="space-y-1.5">
+              <div className="text-sm text-zinc-400 flex items-center gap-2">
+                Member Since
               </div>
-              <div className="flex items-center justify-between py-2">
-                <span>Account Status</span>
-                <span className="text-green-500">Active</span>
-              </div>
+              <p className="px-4 py-2.5 bg-base-200 rounded-lg border border-base-100">{new Date(authUser.createdAt).toLocaleDateString()}</p>
             </div>
           </div>
         </div>
